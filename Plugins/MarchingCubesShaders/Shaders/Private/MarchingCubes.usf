@@ -1,0 +1,173 @@
+#include "/Engine/Public/Platform.ush"
+#include "MarchTables.ush"
+#include "Utils.ush"
+
+StructuredBuffer<float> InNoise;
+StructuredBuffer<float3> InNormals;
+int3 Extent;
+float3 Spacing;
+float IsoLevel;
+
+
+/*
+ * X edges / YZ faces: west -> east
+ * Y edges / XZ faces: south -> north
+ * Z edges / XY faces: bottom -> top
+ */
+RWStructuredBuffer<float3> OutVertices;
+RWStructuredBuffer<int> OutTris;
+RWStructuredBuffer<float3> OutNormals;
+
+/*
+ * returns (bottom-south, bottom-north, top-south, top-north)
+ */
+int4 XEdges(const int3 Cell, const int3 NumVertices, const int3 OneMinusExtent)
+{
+	return int4(
+		Cell.x + Cell.y * OneMinusExtent.x + Cell.z * OneMinusExtent.x * Extent.y,
+		Cell.x + (Cell.y + 1) * OneMinusExtent.x + Cell.z * OneMinusExtent.x * Extent.y,
+		Cell.x + Cell.y * OneMinusExtent.x + (Cell.z + 1) * OneMinusExtent.x * Extent.y,
+		Cell.x + (Cell.y + 1) * OneMinusExtent.x + (Cell.z + 1) * OneMinusExtent.x * Extent.y
+	);
+}
+
+/*
+ * returns (bottom-west, bottom-east, top-west, top-east)
+ */
+int4 YEdges(const int3 Cell, const int3 NumVertices, const int3 OneMinusExtent)
+{
+	return int4(
+		Cell.x + Cell.y * Extent.x + Cell.z * Extent.x * OneMinusExtent.y,
+		(Cell.x + 1) + Cell.y * Extent.x + Cell.z * Extent.x * OneMinusExtent.y,
+		Cell.x + Cell.y * Extent.x + (Cell.z + 1) * Extent.x * OneMinusExtent.y,
+		(Cell.x + 1) + Cell.y * Extent.x + (Cell.z + 1) * Extent.x * OneMinusExtent.y
+	) + NumVertices.x;
+}
+
+/*
+ * returns (south-west, south-east, north-west, north-east)
+ */
+int4 ZEdges(int3 Cell, const int3 NumVertices, const int3 OneMinusExtent)
+{
+	return int4(
+		Cell.x + Cell.y * Extent.x + Cell.z * Extent.x * Extent.y,
+		(Cell.x + 1) + Cell.y * Extent.x + Cell.z * Extent.x * Extent.y,
+		Cell.x + (Cell.y + 1) * Extent.x + Cell.z * Extent.x * Extent.y,
+		(Cell.x + 1) + (Cell.y + 1) * Extent.x + Cell.z * Extent.x * Extent.y
+	) + NumVertices.x + NumVertices.y;
+}
+
+/*
+ * Relative to this cell: (0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)
+ */
+float4 Noise1(int3 Cell)
+{
+	return float4(
+		InNoise[Cell.z * Extent.x * Extent.y + Cell.y * Extent.x + Cell.x],
+		InNoise[Cell.z * Extent.x * Extent.y + Cell.y * Extent.x + (Cell.x + 1)],
+		InNoise[Cell.z * Extent.x * Extent.y + (Cell.y + 1) * Extent.x + Cell.x],
+		InNoise[(Cell.z + 1) * Extent.x * Extent.y + Cell.y * Extent.x + Cell.x]
+	);
+}
+
+/*
+ * Relative to this cell: (1, 1, 1), (0, 1, 1), (1, 0, 1), (1, 1, 0)
+ */
+float4 Noise2(int3 Cell)
+{
+	return float4(
+		InNoise[(Cell.z + 1) * Extent.x * Extent.y + (Cell.y + 1) * Extent.x + (Cell.x + 1)],
+		InNoise[(Cell.z + 1) * Extent.x * Extent.y + (Cell.y + 1) * Extent.x + Cell.x],
+		InNoise[(Cell.z + 1) * Extent.x * Extent.y + Cell.y * Extent.x + (Cell.x + 1)],
+		InNoise[Cell.z * Extent.x * Extent.y + (Cell.y + 1) * Extent.x + (Cell.x + 1)]
+	);
+}
+
+void SaveLerp(const int SaveIndex, const uint3 ThreadId, const int3 offsetA, const int3 offsetB, const float NoiseA, const float NoiseB)
+{
+	const float3 VertA = (ThreadId + offsetA) * Spacing;
+	const float3 VertB = (ThreadId + offsetB) * Spacing;
+	const float3 NormalA = InNormals[NoiseIndex(ThreadId + offsetA, Extent)];
+	const float3 NormalB = InNormals[NoiseIndex(ThreadId + offsetB, Extent)];
+
+	float Alpha;
+	if (NoiseA == NoiseB)
+	{
+		Alpha = 0.5;
+	} else
+	{
+		Alpha = (IsoLevel - NoiseA) / (NoiseB - NoiseA);
+	}
+	OutVertices[SaveIndex] = (1 - Alpha) * VertA + Alpha * VertB;
+	OutNormals[SaveIndex] = normalize((1 - Alpha) * NormalA + Alpha * NormalB);
+}
+
+[numthreads(8, 8, 8)]
+void March(uint3 ThreadId : SV_DispatchThreadID)
+{
+	if (any(ThreadId >= Extent - 1)) return;
+	const int3 NumVertices = int3(
+		(Extent.x - 1) * Extent.y * Extent.z,
+		Extent.x * (Extent.y - 1) * Extent.z,
+		Extent.x * Extent.y * (Extent.z - 1)
+	);
+	const int3 OneMinusExtent = Extent - 1;
+	
+	const int4 IdxX = XEdges(ThreadId, NumVertices, OneMinusExtent);
+	const int4 IdxY = YEdges(ThreadId, NumVertices, OneMinusExtent);
+	const int4 IdxZ = ZEdges(ThreadId, NumVertices,OneMinusExtent);
+	
+	const int CellId = NoiseIndex(ThreadId, OneMinusExtent);
+	const int TriStart = CellId * 15;
+
+	const float4 NoiseA = Noise1(ThreadId);
+	const float4 NoiseB = Noise2(ThreadId);
+	SaveLerp(IdxX.x, ThreadId, int3(0, 0, 0), int3(1, 0, 0), NoiseA.x,NoiseA.y);
+	SaveLerp(IdxY.x, ThreadId, int3(0, 0, 0), int3(0, 1, 0), NoiseA.x,NoiseA.z);
+	SaveLerp(IdxZ.x, ThreadId, int3(0, 0, 0), int3(0, 0, 1), NoiseA.x,NoiseA.w);
+
+	// Initialize edges along east
+	if (ThreadId.x + 2 == Extent.x)
+	{
+		SaveLerp(IdxY.y, ThreadId, int3(1, 0, 0), int3(1, 1, 0), NoiseA.y,NoiseB.w);
+		SaveLerp(IdxZ.y, ThreadId, int3(1, 0, 0), int3(1, 0, 1), NoiseA.y,NoiseB.z);
+	}
+	
+	// Initialize edges along north
+	if (ThreadId.y + 2 == Extent.y)
+	{
+		SaveLerp(IdxX.y, ThreadId, int3(0, 1, 0), int3(1, 1, 0), NoiseA.z,NoiseB.w);
+		SaveLerp(IdxZ.z, ThreadId, int3(0, 1, 0), int3(0, 1, 1), NoiseA.z,NoiseB.y);
+		SaveLerp(IdxZ.w, ThreadId, int3(1, 1, 0), int3(1, 1, 1), NoiseB.w,NoiseB.x);
+	}
+	
+	// Initialize edges along top
+	if (ThreadId.z + 2 == Extent.z)
+	{
+		SaveLerp(IdxX.z, ThreadId, int3(0, 0, 1), int3(1, 0, 1), NoiseA.w,NoiseB.z);
+		SaveLerp(IdxX.w, ThreadId, int3(0, 1, 1), int3(1, 1, 1), NoiseB.y,NoiseB.x);
+		SaveLerp(IdxY.z, ThreadId, int3(0, 0, 1), int3(0, 1, 1), NoiseA.w,NoiseB.y);
+		SaveLerp(IdxY.w, ThreadId, int3(1, 0, 1), int3(1, 1, 1), NoiseB.z,NoiseB.x);
+	}
+
+	
+	/* In matching MarchTables.ush:
+	 * IdxX: 0, 2, 4, 6
+	 * IdxY: 3, 1, 7, 5
+	 * IdxZ: 8, 9, 11, 10
+	 */
+
+	const int Triangulation[15] = MCTriangulation[TriangulationIndex(IsoLevel, NoiseA, NoiseB)];
+	const int CellVertices[12] = {
+		IdxX.x, IdxY.y, IdxX.y, IdxY.x, IdxX.z, IdxY.w, IdxX.w, IdxY.z, IdxZ.x, IdxZ.y, IdxZ.w, IdxZ.z
+	};
+
+#pragma unroll
+	for (uint i = 0; i < 5; i++)
+	{
+		if (Triangulation[i * 3] == -1) continue;
+		OutTris[TriStart + i * 3 + 0] = CellVertices[Triangulation[i * 3 + 0]];
+		OutTris[TriStart + i * 3 + 1] = CellVertices[Triangulation[i * 3 + 1]];
+		OutTris[TriStart + i * 3 + 2] = CellVertices[Triangulation[i * 3 + 2]];
+	}
+}

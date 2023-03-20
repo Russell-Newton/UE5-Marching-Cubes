@@ -1,0 +1,4 @@
+static int NoiseIndex(int3 Point, int3 Extent)
+{
+	return Point.z * Extent.x * Extent.y + Point.y * Extent.y + Point.x;
+}

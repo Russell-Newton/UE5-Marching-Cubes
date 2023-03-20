@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-MarchingCubesShaders.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\rnewt\Documents\Unreal Projects\MarchingCubes\Intermediate\Build\Win64\MarchingCubesEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\rnewt\Documents\Unreal Projects\MarchingCubes\Plugins\MarchingCubesShaders\Intermediate\Build\Win64\UnrealEditor\Development\MarchingCubesShaders\Module.MarchingCubesShaders.cpp.obj"
+"C:\Users\rnewt\Documents\Unreal Projects\MarchingCubes\Plugins\MarchingCubesShaders\Intermediate\Build\Win64\UnrealEditor\Development\MarchingCubesShaders\Default.rc2.res"
+/OUT:"C:\Users\rnewt\Documents\Unreal Projects\MarchingCubes\Plugins\MarchingCubesShaders\Intermediate\Build\Win64\UnrealEditor\Development\MarchingCubesShaders\UnrealEditor-MarchingCubesShaders.lib"

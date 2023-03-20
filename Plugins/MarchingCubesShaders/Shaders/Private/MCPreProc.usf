@@ -1,0 +1,84 @@
+#include "/Engine/Public/Platform.ush"
+#include "Utils.ush"
+
+
+StructuredBuffer<float> InNoise;
+int3 Extent;
+float3 Spacing;
+
+RWStructuredBuffer<float3> OutNormals;
+
+
+static const int3 Offset = int3(1, 0, 0);
+
+
+inline float3 CenterNormal(int3 Center)
+{
+	const int Left = NoiseIndex(Center - Offset, Extent);
+	const int Right = NoiseIndex(Center + Offset, Extent);
+	const int Forward = NoiseIndex(Center - Offset.yxy, Extent);
+	const int Backward = NoiseIndex(Center + Offset.yxy, Extent);
+	const int Down = NoiseIndex(Center - Offset.zzx, Extent);
+	const int Up = NoiseIndex(Center + Offset.zzx, Extent);
+	return normalize(float3(
+			InNoise[Right] - InNoise[Left],
+			InNoise[Backward] - InNoise[Forward],
+			InNoise[Up] - InNoise[Down]
+		) / (2 * Spacing)
+	);
+}
+
+
+inline float3 BoundaryNormal(int3 Point)
+{
+	float x, y, z;
+	if (Point.x == 0)
+	{
+		x = (InNoise[NoiseIndex(Point + Offset, Extent)] - InNoise[NoiseIndex(Point, Extent)]) / Spacing.x;
+	} else if (Point.x == Extent.x - 1)
+	{
+		x = (InNoise[NoiseIndex(Point, Extent)] - InNoise[NoiseIndex(Point - Offset, Extent)]) / Spacing.x;
+	} else
+	{
+		x = (InNoise[NoiseIndex(Point + Offset, Extent)] - InNoise[NoiseIndex(Point - Offset, Extent)]) / (2 * Spacing.x);
+	}
+	
+	if (Point.y == 0)
+	{
+		y = (InNoise[NoiseIndex(Point + Offset.yxy, Extent)] - InNoise[NoiseIndex(Point, Extent)]) / Spacing.y;
+	} else if (Point.y == Extent.y - 1)
+	{
+		y = (InNoise[NoiseIndex(Point, Extent)] - InNoise[NoiseIndex(Point - Offset.yxy, Extent)]) / Spacing.y;
+	} else
+	{
+		y = (InNoise[NoiseIndex(Point + Offset.yxy, Extent)] - InNoise[NoiseIndex(Point - Offset.yxy, Extent)]) / (2 * Spacing.y);
+	}
+	
+	if (Point.z == 0)
+	{
+		z = (InNoise[NoiseIndex(Point + Offset.zzx, Extent)] - InNoise[NoiseIndex(Point, Extent)]) / Spacing.z;
+	} else if (Point.z == Extent.z - 1)
+	{
+		z = (InNoise[NoiseIndex(Point, Extent)] - InNoise[NoiseIndex(Point - Offset.zzx, Extent)]) / Spacing.z;
+	} else
+	{
+		z = (InNoise[NoiseIndex(Point + Offset.zzx, Extent)] - InNoise[NoiseIndex(Point - Offset.zzx, Extent)]) / (2 * Spacing.z);
+	}
+
+	return normalize(float3(x, y, z));
+}
+
+
+[numthreads(8, 8, 8)]
+void CalcNormals(uint3 ThreadId : SV_DispatchThreadID)
+{
+	if (any(ThreadId >= Extent)) return;
+	if (any(ThreadId == Extent - 1) || any(ThreadId == 0))
+	{
+		OutNormals[NoiseIndex(ThreadId, Extent)] = BoundaryNormal(ThreadId);
+	}
+	else
+	{
+		OutNormals[NoiseIndex(ThreadId, Extent)] = CenterNormal(ThreadId);
+	}
+}

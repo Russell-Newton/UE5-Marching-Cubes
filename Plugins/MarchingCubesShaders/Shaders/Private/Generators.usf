@@ -1,0 +1,28 @@
+﻿#include "/Engine/Public/Platform.ush"
+#include "Utils.ush"
+
+
+int3 Extent;
+RWStructuredBuffer<float> OutNoise;
+
+
+[numthreads(8, 8, 8)]
+void Cube(uint3 ThreadId : SV_DispatchThreadID)
+{
+	if (any(ThreadId >= Extent)) return;
+	const int NoiseIdx = NoiseIndex(ThreadId, Extent);
+	const float3 Center = (Extent - 1) / 2.0;
+	const float3 Coords = abs(ThreadId - Center);
+	OutNoise[NoiseIdx] = max(max(Coords.x, Coords.y), Coords.z);
+}
+
+
+[numthreads(8, 8, 8)]
+void Sphere(uint3 ThreadId : SV_DispatchThreadID)
+{
+	if (any(ThreadId >= Extent)) return;
+	const int NoiseIdx = NoiseIndex(ThreadId, Extent);
+	const float3 Center = (Extent - 1) / 2.0;
+	const float3 Coords = ThreadId - Center;
+	OutNoise[NoiseIdx] = sqrt(dot(Coords, Coords));
+}

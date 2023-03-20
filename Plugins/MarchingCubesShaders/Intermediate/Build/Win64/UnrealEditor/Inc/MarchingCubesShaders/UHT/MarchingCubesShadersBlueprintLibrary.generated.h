@@ -1,0 +1,118 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+/*===========================================================================
+	Generated code exported from UnrealHeaderTool.
+	DO NOT modify this manually! Edit the corresponding .h files instead!
+===========================================================================*/
+
+// IWYU pragma: private, include "MarchingCubesShadersBlueprintLibrary.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class UProceduralMeshComponent;
+#ifdef MARCHINGCUBESSHADERS_MarchingCubesShadersBlueprintLibrary_generated_h
+#error "MarchingCubesShadersBlueprintLibrary.generated.h already included, missing '#pragma once' in MarchingCubesShadersBlueprintLibrary.h"
+#endif
+#define MARCHINGCUBESSHADERS_MarchingCubesShadersBlueprintLibrary_generated_h
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_13_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FMarchingCubesOutput_Statics; \
+	MARCHINGCUBESSHADERS_API static class UScriptStruct* StaticStruct();
+
+
+template<> MARCHINGCUBESSHADERS_API UScriptStruct* StaticStruct<struct FMarchingCubesOutput>();
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_SPARSE_DATA
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_RPC_WRAPPERS \
+ \
+	DECLARE_FUNCTION(execNoiseGenSphere); \
+	DECLARE_FUNCTION(execNoiseGenCube); \
+	DECLARE_FUNCTION(execUpdateMesh_MarchingCubes);
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execNoiseGenSphere); \
+	DECLARE_FUNCTION(execNoiseGenCube); \
+	DECLARE_FUNCTION(execUpdateMesh_MarchingCubes);
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_ACCESSORS
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_INCLASS_NO_PURE_DECLS \
+private: \
+	static void StaticRegisterNativesUMarchingCubesShadersBlueprintLibrary(); \
+	friend struct Z_Construct_UClass_UMarchingCubesShadersBlueprintLibrary_Statics; \
+public: \
+	DECLARE_CLASS(UMarchingCubesShadersBlueprintLibrary, UBlueprintFunctionLibrary, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/MarchingCubesShaders"), MARCHINGCUBESSHADERS_API) \
+	DECLARE_SERIALIZER(UMarchingCubesShadersBlueprintLibrary)
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_INCLASS \
+private: \
+	static void StaticRegisterNativesUMarchingCubesShadersBlueprintLibrary(); \
+	friend struct Z_Construct_UClass_UMarchingCubesShadersBlueprintLibrary_Statics; \
+public: \
+	DECLARE_CLASS(UMarchingCubesShadersBlueprintLibrary, UBlueprintFunctionLibrary, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/MarchingCubesShaders"), MARCHINGCUBESSHADERS_API) \
+	DECLARE_SERIALIZER(UMarchingCubesShadersBlueprintLibrary)
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_STANDARD_CONSTRUCTORS \
+	/** Standard constructor, called after all reflected properties have been initialized */ \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UMarchingCubesShadersBlueprintLibrary) \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(MARCHINGCUBESSHADERS_API, UMarchingCubesShadersBlueprintLibrary); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UMarchingCubesShadersBlueprintLibrary); \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(UMarchingCubesShadersBlueprintLibrary&&); \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(const UMarchingCubesShadersBlueprintLibrary&); \
+public: \
+	MARCHINGCUBESSHADERS_API virtual ~UMarchingCubesShadersBlueprintLibrary();
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_ENHANCED_CONSTRUCTORS \
+	/** Standard constructor, called after all reflected properties have been initialized */ \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()) : Super(ObjectInitializer) { }; \
+private: \
+	/** Private move- and copy-constructors, should never be used */ \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(UMarchingCubesShadersBlueprintLibrary&&); \
+	MARCHINGCUBESSHADERS_API UMarchingCubesShadersBlueprintLibrary(const UMarchingCubesShadersBlueprintLibrary&); \
+public: \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(MARCHINGCUBESSHADERS_API, UMarchingCubesShadersBlueprintLibrary); \
+	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UMarchingCubesShadersBlueprintLibrary); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UMarchingCubesShadersBlueprintLibrary) \
+	MARCHINGCUBESSHADERS_API virtual ~UMarchingCubesShadersBlueprintLibrary();
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_24_PROLOG
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_GENERATED_BODY_LEGACY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_SPARSE_DATA \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_RPC_WRAPPERS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_ACCESSORS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_INCLASS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_STANDARD_CONSTRUCTORS \
+public: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+#define FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_GENERATED_BODY \
+PRAGMA_DISABLE_DEPRECATION_WARNINGS \
+public: \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_SPARSE_DATA \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_ACCESSORS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_INCLASS_NO_PURE_DECLS \
+	FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h_27_ENHANCED_CONSTRUCTORS \
+private: \
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+
+template<> MARCHINGCUBESSHADERS_API UClass* StaticClass<class UMarchingCubesShadersBlueprintLibrary>();
+
+#undef CURRENT_FILE_ID
+#define CURRENT_FILE_ID FID_Users_rnewt_Documents_Unreal_Projects_MarchingCubes_Plugins_MarchingCubesShaders_Source_MarchingCubesShaders_Public_MarchingCubesShadersBlueprintLibrary_h
+
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
