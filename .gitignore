@@ -52,3 +52,7 @@ Session.vim
 
 # Visual Studio
 .vs
+
+# Ignore all directories named Binaries, or Intermediate
+**/Binaries/**
+**/Intermediate/**
